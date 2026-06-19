@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+httpx
+pytest
+asyncpg
+email-validator
