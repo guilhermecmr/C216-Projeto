@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="home-container">
+    <div class="home-header">
+        <div>
+            <h1>
+                {{ results.titulo }}
+            </h1>
+
+            <p class="subtitle">
+                Resultado da enquete
+            </p>
+        </div>
+
+        <a href="/polls/{{ results.poll_id }}" class="btn-secondary">
+            Voltar
+        </a>
+    </div>
+
+    <div class="polls-section">
+        <h2>
+            Total de votos: {{ results.total_votos }}
+        </h2>
+
+        {% if results.total_votos == 0 %}
+
+            <div class="empty-state">
+                Ainda não houve votos nesta enquete.
+            </div>
+
+        {% endif %}
+
+        {% if results.opcoes %}
+
+            {% for option in results.opcoes %}
+
+                <div class="poll-card">
+                    <div class="result-header">
+                        <h3>
+                            {{ option.texto }}
+                        </h3>
+
+                        <span>
+                            {{ option.votos }} voto(s) - {{ option.percentual }}%
+                        </span>
+                    </div>
+
+                    <div class="result-bar">
+                        <div
+                            class="result-bar-fill"
+                            style="width: {{ option.percentual }}%;"
+                        ></div>
+                    </div>
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="empty-state">
+                Nenhuma opção cadastrada.
+            </div>
+
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

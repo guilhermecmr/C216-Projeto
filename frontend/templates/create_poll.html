@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card">
+    <h1>
+        Criar Enquete
+    </h1>
+
+    <p class="subtitle">
+        Crie uma nova enquete para votação.
+    </p>
+
+    {% if error %}
+
+        <div class="alert">
+            {{ error }}
+        </div>
+
+    {% endif %}
+
+    <form method="POST">
+        <label>
+            Título
+        </label>
+
+        <input
+            type="text"
+            name="titulo"
+            value="{{ titulo or '' }}"
+            required
+        >
+
+        <label>
+            Descrição
+        </label>
+
+        <textarea
+            name="descricao"
+            rows="4"
+        >{{ descricao or '' }}</textarea>
+
+        <button type="submit" class="btn">
+            Criar Enquete
+        </button>
+    </form>
+
+    <a href="/" class="link">
+        Cancelar
+    </a>
+</div>
+
+{% endblock %}

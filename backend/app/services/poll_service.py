@@ -38,7 +38,7 @@ async def get_polls():
             """
             SELECT *
             FROM enquetes
-            ORDER BY id
+            ORDER BY created_at DESC
             """
         )
         return [dict(poll) for poll in polls]

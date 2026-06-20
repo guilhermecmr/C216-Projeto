@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="home-container">
+    <div class="home-header">
+        <div>
+            <h1>
+                Bem-vindo, {{ session["user_name"] }}
+            </h1>
+
+            <p class="subtitle">
+                Gerencie suas enquetes.
+            </p>
+        </div>
+
+        <a href="/polls/create" class="btn-create">
+            + Nova Enquete
+        </a>
+    </div>
+
+    {% if error %}
+
+        <div class="alert">
+            {{ error }}
+        </div>
+
+    {% endif %}
+
+    <div class="polls-section">
+        <h2>
+            Enquetes cadastradas
+        </h2>
+
+        {% if polls %}
+
+            {% for poll in polls %}
+
+                <div class="poll-card">
+                    <h3>
+                        {{ poll.titulo }}
+                    </h3>
+
+                    <p>
+                        {{ poll.descricao or "Sem descrição." }}
+                    </p>
+
+                    <a href="/polls/{{ poll.id }}" class="btn-card">
+                        Abrir
+                    </a>
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="empty-state">
+                Nenhuma enquete cadastrada.
+            </div>
+
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="auth-page">
+    <div class="card">
+        <h1>
+            Cadastro
+        </h1>
+
+        <p class="subtitle">
+            Crie sua conta no EnqueteHub.
+        </p>
+
+        {% if error %}
+
+            <div class="alert">
+                {{ error }}
+            </div>
+
+        {% endif %}
+
+        <form method="POST">
+            <label>
+                Nome
+            </label>
+
+            <input
+                type="text"
+                name="nome"
+                value="{{ nome or '' }}"
+                required
+            >
+
+            <label>
+                Email
+            </label>
+
+            <input
+                type="email"
+                name="email"
+                value="{{ email or '' }}"
+                required
+            >
+
+            <label>
+                Senha
+            </label>
+
+            <input
+                type="password"
+                name="senha"
+                required
+            >
+
+            <button type="submit" class="btn">
+                Cadastrar
+            </button>
+        </form>
+
+        <a href="/login" class="link">
+            Voltar para login
+        </a>
+    </div>
+</div>
+
+{% endblock %}

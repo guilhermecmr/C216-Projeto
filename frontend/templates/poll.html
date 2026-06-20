@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="home-container">
+    <div class="home-header">
+        <div>
+            <h1>
+                {{ poll.titulo }}
+            </h1>
+
+            <p class="subtitle">
+                {{ poll.descricao or "Sem descrição." }}
+            </p>
+        </div>
+    </div>
+
+    {% if error %}
+
+        <div class="alert">
+            {{ error }}
+        </div>
+
+    {% endif %}
+
+    <div class="poll-top-actions">
+        <a href="/polls/{{ poll.id }}/results" class="btn-secondary">
+            Ver Resultados
+        </a>
+
+        {% if is_owner %}
+
+            <a href="/polls/{{ poll.id }}/edit" class="btn-secondary">
+                Editar Enquete
+            </a>
+
+            <form
+                action="/polls/{{ poll.id }}/delete"
+                method="POST"
+                onsubmit="return confirm('Tem certeza que deseja excluir esta enquete?');"
+            >
+                <button type="submit" class="btn-delete">
+                    Excluir Enquete
+                </button>
+            </form>
+
+        {% endif %}
+    </div>
+
+    {% if is_owner %}
+
+        <div class="poll-actions">
+            <form action="/polls/{{ poll.id }}/options/create" method="POST">
+                <input
+                    type="text"
+                    name="texto"
+                    placeholder="Nova opção"
+                    required
+                >
+
+                <button type="submit" class="btn-create-option">
+                    Adicionar Opção
+                </button>
+            </form>
+        </div>
+
+    {% endif %}
+
+    <div class="polls-section">
+        <h2>
+            Opções
+        </h2>
+
+        {% if options %}
+
+            {% if is_owner %}
+
+                {% for option in options %}
+
+                    <div class="poll-card">
+                        <form
+                            action="/polls/{{ poll.id }}/options/{{ option.id }}/edit"
+                            method="POST"
+                            class="option-form"
+                        >
+                            <input
+                                type="text"
+                                name="texto"
+                                value="{{ option.texto }}"
+                                required
+                            >
+
+                            <button
+                                type="submit"
+                                class="btn-edit"
+                            >
+                                Salvar
+                            </button>
+                        </form>
+
+                        <form
+                            action="/polls/{{ poll.id }}/options/{{ option.id }}/delete"
+                            method="POST"
+                            onsubmit="return confirm('Tem certeza que deseja excluir esta opção?');"
+                        >
+                            <button type="submit" class="btn-delete">
+                                Excluir
+                            </button>
+                        </form>
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <form action="/polls/{{ poll.id }}/vote" method="POST">
+                    {% for option in options %}
+
+                        <div class="poll-card">
+                            <label>
+                                <input
+                                    type="radio"
+                                    name="opcao_id"
+                                    value="{{ option.id }}"
+                                >
+
+                                {{ option.texto }}
+                            </label>
+                        </div>
+
+                    {% endfor %}
+
+                    <button type="submit" class="btn">
+                        Votar
+                    </button>
+                </form>
+
+            {% endif %}
+
+        {% else %}
+
+            <div class="empty-state">
+                Nenhuma opção cadastrada.
+            </div>
+
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

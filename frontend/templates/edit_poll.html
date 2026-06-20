@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card">
+    <h1>
+        Editar Enquete
+    </h1>
+
+    <p class="subtitle">
+        Altere o título e a descrição da enquete.
+    </p>
+
+    {% if error %}
+
+        <div class="alert">
+            {{ error }}
+        </div>
+
+    {% endif %}
+
+    <form method="POST">
+        <label>
+            Título
+        </label>
+
+        <input
+            type="text"
+            name="titulo"
+            value="{{ titulo or '' }}"
+            required
+        >
+
+        <label>
+            Descrição
+        </label>
+
+        <textarea
+            name="descricao"
+            rows="4"
+        >{{ descricao or '' }}</textarea>
+
+        <button type="submit" class="btn">
+            Salvar Alterações
+        </button>
+    </form>
+
+    <a href="/polls/{{ poll.id }}" class="link">
+        Cancelar
+    </a>
+</div>
+
+{% endblock %}

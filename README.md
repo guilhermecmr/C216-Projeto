@@ -2,11 +2,20 @@
 
 ## Descrição do Projeto
 
-O EnqueteHub é uma aplicação web desenvolvida como projeto da disciplina C216, com foco no gerenciamento de enquetes e votação. A ideia é permitir que usuários cadastrem-se no sistema, façam login, criem enquetes com múltiplas opções de respostas e acompanhem os resultados em tempo real por meio de uma API REST.
+O EnqueteHub é uma aplicação web desenvolvida como projeto da disciplina C216, com foco no gerenciamento de enquetes e votação. A ideia é permitir que usuários cadastrem-se no sistema, façam login, criem enquetes com múltiplas opções de respostas, votem em enquetes de outros usuários e acompanhem os resultados em tempo real.
 
-A aplicação foi construída com uma arquitetura separando responsabilidade entre backend, banco de dados, testes e frontend. O backend expõe rotas para criação, consulta, atualização e remoção de usuários, enquetes e opções, além do registro de votos e da consulta dos resultados de cada enquete. O projeto também utiliza Docker e Docker Compose para execução em ambiente containerizado.
+A aplicação foi construída com uma arquitetura separando responsabilidade entre frontend, backend, banco de dados, testes e orquestração em containers. O backend expõe rotas para autenticação, criação, consulta, atualização e remoção de usuários, enquetes e opções, além do registro de votos e da consulta dos resultados de cada enquete. O frontend foi desenvolvido com Flask e consome a API REST do backend para apresentar as telas de login, cadastro, home, criação de enquetes, visualização, edição, votação e resultados.
+
+Do ponto de vista funcional, o sistema foi pensado para simular um fluxo completo de votação: um usuário se cadastra, realiza login, cria uma enquete, adiciona alternativas, registra votos, consulta o resultado final e gerencia suas enquetes diretamente pela interface. 
 
 ## Tecnologias Utilizadas
+
+### Frontend
+- Python 3.12
+- Flask
+- httpx
+- HTML
+- CSS
 
 ### Backend
 - Python 3.12
@@ -24,12 +33,23 @@ A aplicação foi construída com uma arquitetura separando responsabilidade ent
 ### Infraestrutura
 - Docker
 
-### Frontend
-- Em desenvolvimento
-
 ## Execução
 
-> Depois
+### Requisitos
+- Docker
+- Docker Compose
+
+### Subir a aplicação
+Na raiz do projeto, execute:
+
+```bash
+docker compose up --build
+```
+
+### Acessos
+- Frontend: `http://localhost:5000`
+- Backend: `http://localhost:8000`
+- Documentação da API: `http://localhost:8000/docs`
 
 ## Estrutura
 
@@ -62,6 +82,7 @@ C216-PROJETO/
 │   │   └── main.py
 │   ├── tests/
 │   │   ├── auxiliares.py
+│   │   ├── test_auth.py
 │   │   ├── test_options.py
 │   │   ├── test_polls.py
 │   │   ├── test_users.py
@@ -70,13 +91,47 @@ C216-PROJETO/
 │   ├── pytest.ini
 │   └── requirements.txt
 ├── frontend/
+│   ├── app.py
+│   ├── Dockerfile
+│   ├── requirements.txt
+│   ├── routes/
+│   │   ├── auth.py
+│   │   └── polls.py
+│   ├── services/
+│   │   └── api.py
+│   ├── static/
+│   │   └── css/
+│   │       └── style.css
+│   └── templates/
+│       ├── base.html
+│       ├── create_poll.html
+│       ├── edit_poll.html
+│       ├── home.html
+│       ├── login.html
+│       ├── poll.html
+│       ├── register.html
+│       └── results.html
 ├── docker-compose.yml
 └── README.md
 ```
 
 ## Testes e Execução dos Testes
 
-> Depois
+### Executar os testes
+Na raiz do projeto:
+
+```bash
+docker compose run --rm tests
+```
+
+### Cobertura de testes
+Os testes automatizados validam o comportamento da API do backend, cobrindo:
+- autenticação
+- usuários
+- enquetes
+- opções
+- votos
+- resultados
 
 ## Banco de Dados
 <details>
@@ -156,7 +211,7 @@ Campos principais:
 
 ## Endpoints do Backend
 <details>
-A API do backend está organizada em quatro grupos principais: usuários, enquetes, opções e votos. A seguir estão os endpoints atualmente implementados.
+A API do backend está organizada em cinco grupos principais: autenticação, usuários, enquetes, opções e votos. A seguir estão os endpoints atualmente implementados.
 
 ### Autenticação
 
@@ -430,5 +485,104 @@ Erros possíveis:
 </details>
 
 ## Endpoints do Frontend
+<details>
 
-> Depois
+O frontend foi desenvolvido em Flask e utiliza sessões para controlar o acesso às páginas internas. As telas públicas são login e cadastro. Após autenticação, o usuário é redirecionado para a Home e pode navegar pelas funcionalidades de enquetes, opções, votação e resultados.
+
+### Autenticação
+
+#### `GET /login`
+Exibe a tela de login.
+
+#### `POST /login`
+Autentica o usuário via `POST /auth/login` no backend.
+
+#### `GET /register`
+Exibe a tela de cadastro.
+
+#### `POST /register`
+Cria o usuário via `POST /users` no backend.
+
+#### `GET /logout`
+Limpa a sessão do usuário e redireciona para a tela de login.
+
+Uso:
+- Controle de acesso às telas da aplicação via sessão no frontend.
+
+### Home
+
+#### `GET /`
+Exibe a lista de enquetes cadastradas.
+
+Consome:
+- `GET /polls`
+
+Uso:
+- Tela inicial após o login, com listagem das enquetes e acesso rápido à criação de novas enquetes.
+
+### Enquetes
+
+#### `GET /polls/create`
+Exibe o formulário de criação de enquete.
+
+#### `POST /polls/create`
+Cria uma enquete via `POST /polls`.
+
+#### `GET /polls/{poll_id}`
+Exibe os dados de uma enquete específica, suas opções e os controles de gerenciamento.
+
+Consome:
+- `GET /polls/{poll_id}`
+- `GET /options/poll/{poll_id}`
+
+#### `GET /polls/{poll_id}/edit`
+Exibe o formulário de edição da enquete.
+
+#### `POST /polls/{poll_id}/edit`
+Atualiza a enquete via `PUT /polls/{poll_id}`.
+
+#### `POST /polls/{poll_id}/delete`
+Exclui a enquete via `DELETE /polls/{poll_id}`.
+
+Uso:
+- Permite criar, visualizar, editar e excluir enquetes diretamente pela interface.
+
+### Opções
+
+#### `POST /polls/{poll_id}/options/create`
+Cria uma nova opção para uma enquete via `POST /options`.
+
+#### `POST /polls/{poll_id}/options/{option_id}/edit`
+Atualiza uma opção via `PUT /options/{option_id}`.
+
+#### `POST /polls/{poll_id}/options/{option_id}/delete`
+Exclui uma opção via `DELETE /options/{option_id}`.
+
+Uso:
+- Permite que o dono da enquete gerencie as opções disponíveis para votação.
+
+### Votação
+
+#### `POST /polls/{poll_id}/vote`
+Registra um voto via `POST /votes`.
+
+Uso:
+- Permite que usuários que não são donos da enquete votem em uma opção disponível.
+
+Erros tratados:
+- seleção inválida
+- tentativa de votar sem selecionar opção
+- tentativa de votar mais de uma vez
+- tentativa de votar como dono da enquete
+
+### Resultados
+
+#### `GET /polls/{poll_id}/results`
+Exibe o resultado consolidado de uma enquete.
+
+Consome:
+- `GET /polls/results/{poll_id}`
+
+Uso:
+- Exibe total de votos, votos por opção e percentual em uma tela própria.
+</details>

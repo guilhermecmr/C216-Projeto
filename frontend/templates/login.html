@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="auth-page">
+    <div class="card">
+        <h1>
+            Login
+        </h1>
+
+        <p class="subtitle">
+            Entre para acessar suas enquetes.
+        </p>
+
+        {% if error %}
+
+            <div class="alert">
+                {{ error }}
+            </div>
+
+        {% endif %}
+
+        <form method="POST">
+            <label>
+                Email
+            </label>
+
+            <input
+                type="email"
+                name="email"
+                value="{{ email or '' }}"
+                required
+            >
+
+            <label>
+                Senha
+            </label>
+
+            <input
+                type="password"
+                name="senha"
+                required
+            >
+
+            <button type="submit" class="btn">
+                Entrar
+            </button>
+        </form>
+
+        <a href="/register" class="link">
+            Criar conta
+        </a>
+    </div>
+</div>
+
+{% endblock %}
